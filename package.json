@@ -1,0 +1,29 @@
+{
+  "name": "ollama-manager",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --import tsx/esm src/index.ts",
+    "status": "node --import tsx/esm src/index.ts --status",
+    "list": "node --import tsx/esm src/index.ts --list",
+    "test": "node --import tsx/esm src/index.ts --test",
+    "auto": "node --import tsx/esm src/index.ts --auto",
+    "watch": "node --import tsx/esm src/index.ts --watch"
+  },
+  "dependencies": {
+    "chalk": "^5.0.0",
+    "got": "^14.0.0",
+    "ora": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "undici": "^6.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.9.2",
+    "@typescript-eslint/eslint-plugin": "^8.60.1",
+    "@typescript-eslint/parser": "^8.60.1",
+    "eslint": "^10.4.1",
+    "typescript-eslint": "^8.60.1"
+  }
+}
