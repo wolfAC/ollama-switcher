@@ -21,28 +21,14 @@ export function printActiveBanner(user: string | null): void {
 }
 
 export function printDashboard(results: AccountResult[]): void {
-  results.forEach((r, i) => {
-    const isExhausted = r.exhausted;
-    const bullet = isExhausted ? chalk.red("✗") : chalk.green("✓");
-    const status = isExhausted
-      ? chalk.yellow("quota exhausted")
-      : chalk.green("available");
-
-    console.log(`  ${bullet} ${chalk.bold(r.email)}  ${status}`);
+  results.forEach((r) => {
+    console.log(`  ${chalk.green("✓")} ${chalk.bold(r.email)}  ${chalk.green("available")}`);
   });
 
-  const ok = results.filter((r) => r.ok && !r.exhausted).length;
-  const exhausted = results.filter((r) => r.exhausted).length;
-  const invalid = results.filter((r) => !r.ok && !r.exhausted).length;
-  const total = results.filter((r) => !r.key.startsWith("sk-your")).length;
+  const total = results.length;
 
   console.log();
   rule();
-  console.log(
-    `  ${chalk.green(ok + " available")}  ` +
-      (exhausted ? chalk.yellow(exhausted + " exhausted  ") : "") +
-      (invalid ? chalk.red(invalid + " invalid  ") : "") +
-      chalk.dim(`of ${total} accounts`),
-  );
+  console.log(`  ${chalk.green(total + " accounts available")}`);
   rule();
 }
