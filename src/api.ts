@@ -78,7 +78,7 @@ export async function probeGenerate(apiKey: string, model: string): Promise<Prob
 
   for (const [k, v] of Object.entries(resHeaders)) {
     const kl = k.toLowerCase();
-    if (kl.includes("ratelimit") || kl.includes("quota") || kl.includes("remaining")) {
+    if (kl.includes("ratelimit") || kl.includes("quota") || kl.includes("remaining") || kl.includes("limit")) {
       quota[k] = String(v);
       if (kl.includes("remaining")) remaining = parseInt(String(v), 10);
     }
