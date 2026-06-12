@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "node --import tsx/esm src/index.ts",
     "status": "node --import tsx/esm src/index.ts --status",
-    "list": "node --import tsx/esm src/index.ts --list",
-    "test": "node --import tsx/esm src/index.ts --test",
+    "login": "node --import tsx/esm src/index.ts --login",
+    "switch": "node --import tsx/esm src/index.ts --switch",
     "auto": "node --import tsx/esm src/index.ts --auto",
     "watch": "node --import tsx/esm src/index.ts --watch"
   },

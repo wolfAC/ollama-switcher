@@ -3,8 +3,9 @@ import { request } from "undici";
 const BASE = "https://ollama.com";
 
 export interface Account {
-  email: string;
-  key:   string;
+  email:     string;
+  key:       string;
+  password?: string;
 }
 
 export interface ProbeResult {
