@@ -1,5 +1,5 @@
 import ora from "ora";
-import { checkAccount, type AccountResult } from "./api.js";
+import { checkAccount, isUsable, type AccountResult } from "./api.js";
 import {
   getCurrentUser,
   isLoggedIn,
@@ -26,11 +26,13 @@ async function probeAll(): Promise<AccountResult[]> {
 }
 
 function pickBest(results: AccountResult[]): AccountResult | null {
-  const available = results.filter(r => r.ok && !r.exhausted);
-  available.sort(
-    (a, b) => (b.probe?.remaining ?? -1) - (a.probe?.remaining ?? -1),
-  );
-  return available[0] ?? null;
+  const usable = results.filter(isUsable);
+  usable.sort((a, b) => {
+    // Prefer immediately-available over rate-limited, then by remaining quota.
+    const rank = (r: AccountResult) => (r.state === "available" ? 0 : 1);
+    return rank(a) - rank(b) || (b.remaining ?? -1) - (a.remaining ?? -1);
+  });
+  return usable[0] ?? null;
 }
 
 function activeEmail(currentUser: string | null): string | null {
@@ -63,8 +65,9 @@ async function auto(): Promise<boolean> {
   printDashboard(results, best?.email ?? null, current);
 
   const currentResult = results.find(r => r.email === current);
-  if (currentUser && currentResult?.ok && !currentResult.exhausted) {
-    console.log(`\n  Current account ${current} still has quota — no switch needed.\n`);
+  if (currentUser && currentResult && isUsable(currentResult)) {
+    const note = currentResult.state === "rate_limited" ? " (rate-limited but has quota)" : "";
+    console.log(`\n  Current account ${current} still has quota${note} — no switch needed.\n`);
     return true;
   }
 

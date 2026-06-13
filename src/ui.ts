@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import type { AccountResult } from "./api.js";
+import { isUsable, type AccountResult } from "./api.js";
 
 const W = 68;
 
@@ -32,25 +32,37 @@ export function printDashboard(
     if (r.email === bestEmail)   tags.push(chalk.cyan("★ best"));
 
     let icon: string, label: string;
-    if (r.ok && !r.exhausted) {
-      icon  = chalk.green("✓");
-      label = chalk.green("available");
-      if (r.probe?.remaining != null) label += chalk.dim(`  (${r.probe.remaining} left)`);
-    } else if (r.exhausted) {
-      icon  = chalk.yellow("◐");
-      label = chalk.yellow("exhausted");
-    } else {
-      icon  = chalk.red("✗");
-      label = chalk.red(r.error ?? "error");
+    switch (r.state) {
+      case "available":
+        icon  = chalk.green("✓");
+        label = chalk.green("available");
+        if (r.remaining != null) label += chalk.dim(`  (${r.remaining} left)`);
+        break;
+      case "rate_limited":
+        icon  = chalk.cyan("↻");
+        label = chalk.cyan("rate-limited") +
+          chalk.dim(r.retryAfter != null ? `  (retry ${r.retryAfter}s — has quota)` : "  (has quota)");
+        break;
+      case "exhausted":
+        icon  = chalk.yellow("◐");
+        label = chalk.yellow("exhausted");
+        break;
+      case "unauthorized":
+        icon  = chalk.red("✗");
+        label = chalk.red("invalid key");
+        break;
+      default:
+        icon  = chalk.red("✗");
+        label = chalk.red(r.error ?? "error");
     }
 
     console.log(`  ${icon} ${chalk.bold(r.email)}  ${label}  ${tags.join(" ")}`);
   }
 
-  const available = results.filter(r => r.ok && !r.exhausted).length;
+  const usable = results.filter(isUsable).length;
 
   console.log();
   rule();
-  console.log(`  ${chalk.green(`${available} of ${results.length} accounts available`)}`);
+  console.log(`  ${chalk.green(`${usable} of ${results.length} accounts usable`)}`);
   rule();
 }
